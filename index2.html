@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trung Thu Lung Linh</title>
+  <style>
+    body {
+      background: #0b0b2e;
+      margin: 0;
+      overflow: hidden;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      cursor: crosshair; /* để tạo cảm giác click nổ pháo hoa */
+    }
+    #lantern-area, #star-area, #firework-area, #heart-area {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      pointer-events: none;
+    }
+    #main-content {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+    }
+    .glow-text {
+      font-size: 40px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 10px #ffcc00, 0 0 20px #ff9900, 0 0 40px #ff6600;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ffcc00, 0 0 10px #ff9900; }
+      to   { text-shadow: 0 0 20px #ff6600, 0 0 40px #ff3300; }
+    }
+    /* Đèn lồng */
+    .lantern {
+      position: absolute;
+      bottom: -120px;
+      width: 100px; height: 120px;
+      background: orange;
+      border-radius: 50% 50% 10% 10%;
+      box-shadow: 0 0 15px 5px yellow, inset 0 0 10px #ffcc00;
+      animation: flyUp linear infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 5px black;
+    }
+    .lantern img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+    }
+    @keyframes flyUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(8deg); opacity: 0; }
+    }
+    /* Trái tim */
+    .heart {
+      position: absolute;
+      bottom: -20px;
+      color: red;
+      font-size: 20px;
+      animation: flyHeart 5s linear forwards;
+    }
+    @keyframes flyHeart {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+    /* Sao */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
+    /* Pháo hoa */
+    .firework {
+      position: absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      animation: explode 1s ease-out forwards;
+    }
+    @keyframes explode {
+      from { transform: scale(0.5) translate(0,0); opacity: 1; }
+      to { transform: scale(1) translate(var(--dx), var(--dy)); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div id="star-area"></div>
+  <div id="firework-area"></div>
+  <div id="heart-area"></div>
+  <div id="lantern-area"></div>
+
+  <div id="main-content">
+    <h1 class="glow-text">✨ Chúc Mừng Trung Thu ✨</h1>
+    <p>Gửi đến <strong id="receiver-name">Bạn yêu quý</strong></p>
+    <button onclick="toggleMusic()">🎵 Bật/Tắt Nhạc</button>
+  </div>
+
+  <!-- 🎶 Nhạc nền -->
+  <audio id="bg-music" autoplay loop>
+    <source src="7077876453022.mp3" type="audio/mpeg">
+    Trình duyệt của bạn không hỗ trợ phát nhạc.
+  </audio>
+
+  <script>
+    let loiChuc = [
+      "Trung Thu vui vẻ 🌕",
+      "Gia đình hạnh phúc 👨‍👩‍👧‍👦",
+      "Mãi luôn yêu thương ❤️",
+      "Học tập tiến bộ 📚"
+    ];
+    let hinhAnh = [
+      "img1.jpg",
+      "img2.jpg",
+      "img3.png"
+    ];
+
+    function createLantern() {
+      const lantern = document.createElement("div");
+      lantern.classList.add("lantern");
+
+      if (Math.random() > 0.5) {
+        lantern.textContent = loiChuc[Math.floor(Math.random() * loiChuc.length)];
+      } else {
+        let img = document.createElement("img");
+        img.src = hinhAnh[Math.floor(Math.random() * hinhAnh.length)];
+        lantern.appendChild(img);
+      }
+
+      lantern.style.left = Math.random() * (window.innerWidth - 100) + "px";
+      lantern.style.animationDuration = (6 + Math.random() * 4) + "s";
+      document.getElementById("lantern-area").appendChild(lantern);
+      setTimeout(() => lantern.remove(), 10000);
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "❤️";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      document.getElementById("heart-area").appendChild(heart);
+      setTimeout(() => heart.remove(),5000);
+    }
+
+    function createStars(count=80) {
+      for (let i=0;i<count;i++) {
+        const star = document.createElement("div");
+        star.classList.add("star");
+        let size = Math.random()*3+2;
+        star.style.width = size+"px";
+        star.style.height = size+"px";
+        star.style.left = Math.random()*window.innerWidth+"px";
+        star.style.top = Math.random()*window.innerHeight+"px";
+        star.style.animationDuration = (1.5+Math.random()*2)+"s";
+        document.getElementById("star-area").appendChild(star);
+      }
+    }
+
+    // 🔥 pháo hoa tự động
+    function autoFirework() {
+      const x = Math.random()*window.innerWidth;
+      const y = Math.random()*(window.innerHeight/2);
+      createFirework(x, y);
+    }
+
+    // 🎆 pháo hoa chung (dùng cho cả tự động và click)
+    function createFirework(x, y) {
+      const colors = ["yellow","red","lime","cyan","magenta","orange","white"];
+      for (let i=0;i<20;i++) {
+        const fw = document.createElement("div");
+        fw.classList.add("firework");
+        fw.style.left = x+"px";
+        fw.style.top = y+"px";
+        fw.style.background = colors[Math.floor(Math.random()*colors.length)];
+        
+        // tạo hướng bung ra
+        let angle = (Math.PI * 2 * i) / 20;
+        let dx = Math.cos(angle) * 100 + "px";
+        let dy = Math.sin(angle) * 100 + "px";
+        fw.style.setProperty("--dx", dx);
+        fw.style.setProperty("--dy", dy);
+
+        document.getElementById("firework-area").appendChild(fw);
+        setTimeout(()=>fw.remove(),1000);
+      }
+    }
+
+    function toggleMusic() {
+      let music = document.getElementById("bg-music");
+      if (music.paused) {
+        music.play();
+      } else {
+        music.pause();
+      }
+    }
+
+    // Khởi chạy
+    createStars(80);
+    setInterval(createLantern, 1200);
+    setInterval(createHeart, 2000);
+    setInterval(autoFirework, 4000);
+
+    // 💥 pháo hoa theo click chuột
+    document.addEventListener("click", function(e) {
+      createFirework(e.clientX, e.clientY);
+    });
+  </script>
+</body>
+</html>
